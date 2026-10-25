@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
-	  "restart:backend": "npm --prefix backend run dev",
+	  "restart:backend": "npm run restart --workspace=backend",
 	  "build:frontend": "npm --prefix frontend run build",
 	  "dev:frontend": "npm --prefix frontend run dev"
 	},
