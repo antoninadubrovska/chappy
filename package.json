@@ -9,5 +9,5 @@
 	},
 	"author": "",
 	"type": "module",
-	"workspaces": ["frontend", "backend", "packages/shared"]
+	"workspaces": ["frontend", "backend", "packages"]
   }
