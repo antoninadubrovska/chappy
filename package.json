@@ -3,11 +3,15 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
-	  "restart:backend": "npm run restart --workspace=backend",
-	  "build:frontend": "npm --prefix frontend run build",
-	  "dev:frontend": "npm --prefix frontend run dev"
+		"restart:backend": "npm run restart --workspace=backend",
+		"build:frontend": "npm --prefix frontend run build",
+		"dev:frontend": "npm --prefix frontend run dev"
 	},
 	"author": "",
 	"type": "module",
-	"workspaces": ["frontend", "backend", "packages"]
-  }
+	"workspaces": [
+		"frontend",
+		"backend",
+		"packages"
+	]
+}

@@ -1,17 +1,17 @@
 {
 	"compilerOptions": {
-	  "rootDir": "..",
-	  "outDir": "./dist",
+		"rootDir": "..",
+		"outDir": "./dist",
 
-	  "module": "nodenext",
-	  "target": "esnext",
-	  "types": [],
-	  "strict": true,
-	  "esModuleInterop": true,
-	  "skipLibCheck": true,
+		"module": "nodenext",
+		"target": "esnext",
+		"types": [],
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
 
-	  "rewriteRelativeImportExtensions": true,
-	  // "allowImportingTsExtensions": true
+		"rewriteRelativeImportExtensions": true
+		// "allowImportingTsExtensions": true
 	},
 	"include": ["src"]
-  }
+}
