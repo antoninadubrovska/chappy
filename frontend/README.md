@@ -1,3 +1,34 @@
+
+
+Q: Vad ska README.md innehålla?
+
+A: Berätta
+vad projektet går ut på,
+vilka tekniker som ingår,
+hur man installerar och startar det,
+länk till publicerade appen,
+om det är något särskilt man behöver veta när man testkör den,
+sådan information som du vill att en potentiell rekryterare ska kunna se.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
