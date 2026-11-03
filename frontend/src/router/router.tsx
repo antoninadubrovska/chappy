@@ -3,6 +3,9 @@ import App from '../App'
 import MoreChannelsPage from '../pages/MoreChannelsPage'
 import AiChatPage from '../pages/AiChatPage'
 import HomePage from '../pages/HomePge'
+import ProfilePage from '../pages/ProfilePage'
+import DirectMessagePage from '../pages/DirectMessagePage'
+import ChannelPage from '../pages/ChannelPage'
 
 export const router = createHashRouter([
     {
@@ -15,12 +18,24 @@ export const router = createHashRouter([
                 element: <HomePage />,
             },
             {
-                path: 'discover',
+                path: 'moreChannels',
                 element: <MoreChannelsPage />,
             },
             {
-                path: 'ai',
+                path: 'aiChat',
                 element: <AiChatPage />,
+			},
+			{
+                path: 'channel/:channelId',
+                element: <ChannelPage />,
+            },
+            {
+                path: 'dm/:username',
+                element: <DirectMessagePage />,
+            },
+            {
+                path: 'userProfile',
+                element: <ProfilePage />,
             },
         ],
     },

@@ -1,10 +1,11 @@
-import { NavLink, Outlet } from 'react-router-dom'
-import './App.css'
+import { NavLink, Outlet } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
+import "./App.css";
 
 function App() {
-    return (
-        <div className="app">
-            <header>
+	return (
+		<div className="app">
+			{/* <header>
                 <h2>Chappy</h2>
 
                 <nav>
@@ -12,13 +13,14 @@ function App() {
                     <NavLink to="/discover">More channels</NavLink>
                     <NavLink to="/ai">AI</NavLink>
                 </nav>
-            </header>
+            </header> */}
+			<Sidebar />
 
-            <main>
-                <Outlet />
-            </main>
-        </div>
-    )
+			<main className="main-content">
+				<Outlet />
+			</main>
+		</div>
+	);
 }
 
-export default App
+export default App;
