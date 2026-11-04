@@ -5,7 +5,8 @@
 	"scripts": {
 		"restart:backend": "npm run restart --workspace=backend",
 		"build:frontend": "npm --prefix frontend run build",
-		"dev:frontend": "npm --prefix frontend run dev"
+		"dev:frontend": "npm --prefix frontend run dev",
+		"start:frontend": "npm --prefix frontend run preview -- --host 0.0.0.0"
 	},
 	"author": "",
 	"type": "module",
