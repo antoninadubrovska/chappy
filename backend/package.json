@@ -5,7 +5,8 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"restart": "tsc && node --env-file=../.env ./dist/backend/src/server.js"
+		"build": "tsc",
+		"start": "node --env-file=../.env ./dist/backend/src/server.js"
 	},
 	"keywords": [],
 	"author": "",
@@ -24,4 +25,3 @@
 		"typescript": "^6.0.3"
 	}
 }
-
