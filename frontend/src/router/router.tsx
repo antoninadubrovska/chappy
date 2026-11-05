@@ -1,4 +1,4 @@
-import { createHashRouter } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 import App from '../App'
 import MoreChannelsPage from '../pages/MoreChannelsPage'
 import AiChatPage from '../pages/AiChatPage'
@@ -7,7 +7,8 @@ import ProfilePage from '../pages/ProfilePage'
 import DirectMessagePage from '../pages/DirectMessagePage'
 import ChannelPage from '../pages/ChannelPage'
 
-export const router = createHashRouter([
+// TODO switch to web router
+export const router = createBrowserRouter([
     {
         path: '/',
 		element: <App />,
