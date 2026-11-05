@@ -2,12 +2,13 @@
 	"name": "chappy",
 	"version": "1.0.0",
 	"private": true,
+
 	"scripts": {
+		"dev:frontend": "npm run dev --workspace=frontend",
 		"restart:backend": "npm run restart --workspace=backend",
-		"build:frontend": "npm --prefix frontend run build",
-		"dev:frontend": "npm --prefix frontend run dev",
-		"start:frontend": "npm --prefix frontend run preview -- --host 0.0.0.0"
-	},
+		"build": "npm run build --workspace=backend && npm run build --workspace=frontend",
+		"start:render": "npm run start --workspace=backend"
+	  },
 	"author": "",
 	"type": "module",
 	"workspaces": [
@@ -16,3 +17,4 @@
 		"packages"
 	]
 }
+
