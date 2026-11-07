@@ -2,9 +2,12 @@ import express from "express";
 import usersRouter from './routes/users.ts'
 import path from "node:path";
 import { existsSync } from "node:fs";
+import { getPort } from './utils.ts'
+import { logger } from './middleware.ts'
+
 
 const app = express();
-const PORT = Number(process.env.PORT) || 3008;
+const PORT = getPort();
 const HOST = "0.0.0.0";
 
 const distPath = path.resolve(
@@ -15,15 +18,15 @@ const distPath = path.resolve(
 console.log("Frontend path:", distPath);
 console.log("index.html exists:", existsSync(path.join(distPath, "index.html")));
 
-  // Middleware
+// Middleware
+app.use(logger);
 app.use(express.json());
-
-// Serve the built frontend
 app.use(express.static(distPath));
 
 // API routes
 app.use('/api/users', usersRouter)
 
+// router test
 app.get("/api/test", (_req, res) => {
 	res.json({ message: "Hello from the Chappy backend" });
 });
