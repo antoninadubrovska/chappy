@@ -4,8 +4,38 @@ import bcrypt from 'bcryptjs'
 import { TransactWriteCommand } from '@aws-sdk/lib-dynamodb'
 import { db, TABLE_NAME } from '../database.ts'
 import { userRegistrationSchema } from '../../../packages/shared/src/schema.ts'
+import { QueryCommand } from '@aws-sdk/lib-dynamodb'
 
 const router = Router()
+
+router.get('/', async (_req, res) => {
+    try {
+        const result = await db.send(new QueryCommand({
+            TableName: TABLE_NAME,
+            KeyConditionExpression: 'pk = :pk AND begins_with(sk, :prefix)',
+            ExpressionAttributeValues: {
+                ':pk': 'USERNAMES',
+                ':prefix': 'USERNAME#'
+            }
+        }))
+
+        const users = result.Items?.map(item => ({
+            userId: item.userId,
+            username: item.username
+        })) ?? []
+
+        return res.json(users)
+
+    } catch (error) {
+        console.error(error)
+
+        return res.status(500).json({
+            message: 'Could not retrieve users'
+        })
+    }
+})
+
+
 
 router.post('/register', async (req, res) => {
     const result = userRegistrationSchema.safeParse(req.body)
