@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { randomUUID } from "node:crypto";
 import bcrypt from "bcryptjs";
-import { TransactWriteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { TransactWriteCommand, QueryCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { db, TABLE_NAME, getUserByUsername } from "../database.ts";
 import {
 	userRegistrationSchema,
@@ -9,6 +9,7 @@ import {
 	type TokenResponse,
 } from "../../../packages/shared/src/schema.ts";
 import jwt from "jsonwebtoken";
+import { requireAuth } from '../middleware.ts'
 
 const router = Router();
 
@@ -46,6 +47,35 @@ router.get("/", async (_req, res) => {
 		});
 	}
 });
+
+
+router.get('/me', requireAuth, async (_req, res) => {
+    try {
+        const result = await db.send(new GetCommand({
+            TableName: TABLE_NAME,
+            Key: {
+                pk: `USER#${res.locals.userId}`,
+                sk: 'PROFILE'
+            }
+        }))
+
+        if (!result.Item) {
+            return res.status(404).json({ message: 'User not found' })
+        }
+
+        return res.json({
+            userId: result.Item.userId,
+            username: result.Item.username,
+            displayName: result.Item.displayName
+        })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({ message: 'Could not retrieve user' })
+    }
+})
+
+
+
 
 router.post("/login", async (req, res) => {
 	// validate before accessing the credentials

@@ -26,6 +26,14 @@ app.use(express.static(distPath));
 // API routes
 app.use('/api/users', usersRouter)
 
+// test
+app.get('/api/test-auth-route', (_req, res) => {
+    res.json({ message: 'Test route is working' })
+})
+
+
+
+
 // router test
 app.get("/api/test", (_req, res) => {
 	res.json({ message: "Hello from the Chappy backend" });

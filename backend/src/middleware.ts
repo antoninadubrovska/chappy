@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import jwt from 'jsonwebtoken'
 
 export function formatTimestamp(date: Date = new Date()): string {
     const pad = (n: number) => String(n).padStart(2, "0");
@@ -20,3 +21,49 @@ export const logger: RequestHandler = (req, res, next) => {
 
     next();
 };
+
+const { verify, TokenExpiredError, JsonWebTokenError } = jwt
+
+const SECRET = process.env.SECRET
+
+if (!SECRET) {
+    throw new Error('Missing JWT secret.')
+}
+
+export const requireAuth: RequestHandler = (req, res, next) => {
+    const auth = req.headers.authorization
+
+    if (!auth || !auth.startsWith('Bearer ')) {
+        res.sendStatus(401)
+        return
+    }
+
+    const token = auth.slice(7)
+
+    try {
+        const verified = verify(token, SECRET)
+
+        if (
+            typeof verified === 'string' ||
+            !('userId' in verified) ||
+            typeof verified.userId !== 'string'
+        ) {
+            res.sendStatus(401)
+            return
+        }
+
+        res.locals.userId = verified.userId
+        next()
+
+    } catch (error: unknown) {
+        if (
+            error instanceof TokenExpiredError ||
+            error instanceof JsonWebTokenError
+        ) {
+            res.sendStatus(401)
+            return
+        }
+
+        next(error)
+    }
+}
