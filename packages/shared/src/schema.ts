@@ -26,3 +26,23 @@ export const publicUserSchema = userSchema.omit({
 })
 
 export type PublicUser = z.infer<typeof publicUserSchema>
+
+
+// info supplied during login
+export const loginCredentialsSchema = z.object({
+    username: z.string().trim().min(3),
+    password: z.string().min(8)
+})
+
+export type LoginCredentials = z.infer<typeof loginCredentialsSchema>
+
+// response returned after successful login
+export type TokenResponse = {
+    jwt: string
+}
+
+// info stored inside JWT
+export type JwtPayload = {
+    userId: string
+}
+

@@ -1,5 +1,6 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient,  GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+
 
 const region = process.env.AWS_REGION;
 const accessKeyId = process.env.ACCESS_KEY;
@@ -20,3 +21,35 @@ const dynamoDBClient = new DynamoDBClient({
 export const db = DynamoDBDocumentClient.from(dynamoDBClient);
 
 export const TABLE_NAME = "chappy";
+
+
+// the first record is to discover the userId, the second is to retrieve the password hash
+
+export async function getUserByUsername(username: string) {
+    const normalizedUsername = username.toLowerCase()
+
+    const usernameResult = await db.send(new QueryCommand({
+        TableName: TABLE_NAME,
+        KeyConditionExpression: 'pk = :pk AND sk = :sk',
+        ExpressionAttributeValues: {
+            ':pk': 'USERNAMES',
+            ':sk': `USERNAME#${normalizedUsername}`
+        }
+    }))
+
+    const usernameItem = usernameResult.Items?.[0]
+
+    if (!usernameItem) {
+        return undefined
+    }
+
+    const profileResult = await db.send(new GetCommand({
+        TableName: TABLE_NAME,
+        Key: {
+            pk: `USER#${usernameItem.userId}`,
+            sk: 'PROFILE'
+        }
+    }))
+
+    return profileResult.Item
+}
