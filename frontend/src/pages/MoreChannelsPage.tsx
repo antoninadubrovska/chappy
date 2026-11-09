@@ -16,6 +16,7 @@ function MoreChannelsPage() {
             })
     }, [])
 
+	// TODO factor out a component
 	return (
 		<section>
 			<h1>More channels</h1>

@@ -6,9 +6,16 @@ import HomePage from '../pages/HomePge'
 import ProfilePage from '../pages/ProfilePage'
 import DirectMessagePage from '../pages/DirectMessagePage'
 import ChannelPage from '../pages/ChannelPage'
+import LoginPage from '../pages/LoginPage'
 
 // TODO switch to web router
 export const router = createBrowserRouter([
+
+	// login won't render the Sidebar
+	{
+		path: '/login',
+		element: <LoginPage />,
+	},
     {
         path: '/',
 		element: <App />,

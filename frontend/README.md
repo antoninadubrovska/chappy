@@ -11,23 +11,23 @@ om det är något särskilt man behöver veta när man testkör den,
 sådan information som du vill att en potentiell rekryterare ska kunna se.
 
 
+instead of
+		"restart": "tsc && node --env-file=../.env ./dist/backend/src/server.js"
+		:
+		"build": "tsc",
+		"start": "node --env-file=../.env ./dist/backend/src/server.js"
 
 
+$ npm i && (npm run build --workspace=backend & npm run start --workspace=backend & npm run dev:frontend)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+Root package.json
+	"scripts": {
+		"restart:backend": "npm run restart --workspace=backend",
+		"build:frontend": "npm --prefix frontend run build",
+		"dev:frontend": "npm --prefix frontend run dev",
+		"start:frontend": "npm --prefix frontend run preview -- --host 0.0.0.0"
+	},
 
 # React + TypeScript + Vite
 
