@@ -1,48 +1,54 @@
-import * as z from 'zod'
+import * as z from "zod";
 
 // complete stored user, including the password hash
 export const userSchema = z.object({
-    userId: z.string(),
-    username: z.string().min(3),
-    displayName: z.string().min(1),
-    passwordHash: z.string(),
-    createdAt: z.string()
-})
+	userId: z.string(),
+	username: z.string().min(3),
+	displayName: z.string().min(1),
+	passwordHash: z.string(),
+	createdAt: z.string(),
+});
 
-export type User = z.infer<typeof userSchema>
+export type User = z.infer<typeof userSchema>;
 
 // information supplied during registration
 export const userRegistrationSchema = z.object({
-    username: z.string().trim().min(3),
-    displayName: z.string().trim().min(1),
-    password: z.string().min(8)
-})
+	username: z.string().trim().min(3),
+	displayName: z.string().trim().min(1),
+	password: z
+		.string()
+		.min(8, "Password must be at least 8 characters")
+		.regex(/[A-Za-z]/, "Password must contain at least one letter")
+		.regex(/[0-9]/, "Password must contain at least one number")
+		.regex(
+			/[^A-Za-z0-9]/,
+			"Password must contain at least one special character",
+		),
+});
 
-export type UserRegistration = z.infer<typeof userRegistrationSchema>
+export type UserRegistration = z.infer<typeof userRegistrationSchema>;
 
 // public user information returned by API
 export const publicUserSchema = userSchema.omit({
-    passwordHash: true
-})
+	passwordHash: true,
+});
 
-export type PublicUser = z.infer<typeof publicUserSchema>
-
+export type PublicUser = z.infer<typeof publicUserSchema>;
 
 // info supplied during login
 export const loginCredentialsSchema = z.object({
-    username: z.string().trim().min(3),
-    password: z.string().min(8)
-})
+	username: z.string().trim().min(3),
+	password: z.string().min(8),
+});
 
-export type LoginCredentials = z.infer<typeof loginCredentialsSchema>
+export type LoginCredentials = z.infer<typeof loginCredentialsSchema>;
 
 // response returned after successful login
 export type TokenResponse = {
-    jwt: string
-}
+	jwt: string;
+};
 
 // info stored inside JWT
 export type JwtPayload = {
-    userId: string
-}
-
+	userId: string;
+};

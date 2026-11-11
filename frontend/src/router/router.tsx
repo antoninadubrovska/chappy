@@ -7,6 +7,7 @@ import ProfilePage from '../pages/ProfilePage'
 import DirectMessagePage from '../pages/DirectMessagePage'
 import ChannelPage from '../pages/ChannelPage'
 import LoginPage from '../pages/LoginPage'
+import RegisterPage from '../pages/RegisterPage'
 
 // TODO switch to web router
 export const router = createBrowserRouter([
@@ -15,6 +16,10 @@ export const router = createBrowserRouter([
 	{
 		path: '/login',
 		element: <LoginPage />,
+	},
+	{
+		path: '/register',
+		element: <RegisterPage />,
 	},
     {
         path: '/',
