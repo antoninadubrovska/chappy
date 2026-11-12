@@ -5,6 +5,8 @@ import {
 	channelIndexFromDbSchema,
 	type ChannelIndexFromDb,
 	channelCreationSchema,
+	Message,
+	messageFromDbSchema,
 } from "../../../packages/shared/src/schema.ts";
 import { randomUUID } from "node:crypto";
 import { requireAuth } from "../middleware.ts";
@@ -34,6 +36,47 @@ router.get("/", async (_req, res) => {
 		return res.sendStatus(500);
 	}
 });
+
+
+// GET /api/channels/:channelId/messages
+router.get("/:channelId/messages", async (req, res) => {
+    const channelId = req.params.channelId;
+
+    try {
+        const result = await db.send(
+            new QueryCommand({
+                TableName: TABLE_NAME,
+                KeyConditionExpression:
+                    "pk = :pk AND begins_with(sk, :sk)",
+                ExpressionAttributeValues: {
+                    ":pk": `CHANNEL#${channelId}`,
+                    ":sk": "MESSAGE#",
+				},
+				// messages in ascending order
+                ScanIndexForward: true,
+            }),
+        );
+
+        const messages: Message[] = (result.Items ?? []).map(item => {
+            const message = messageFromDbSchema.parse(item);
+
+            return {
+                messageId: message.messageId,
+                channelId: message.channelId,
+                userId: message.userId,
+                username: message.username,
+                content: message.content,
+                createdAt: message.createdAt,
+            };
+        });
+
+        return res.status(200).json(messages);
+    } catch (error) {
+        console.error("GET channel messages error:", error);
+        return res.sendStatus(500);
+    }
+});
+
 
 // POST /api/channels
 router.post("/", requireAuth, async (req, res) => {
