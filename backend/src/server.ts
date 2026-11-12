@@ -4,6 +4,7 @@ import path from "node:path";
 import { existsSync } from "node:fs";
 import { getPort } from './utils.ts'
 import { logger } from './middleware.ts'
+import channelsRouter from "./routes/channels.ts";
 
 
 const app = express();
@@ -25,6 +26,7 @@ app.use(express.static(distPath));
 
 // API routes
 app.use('/api/users', usersRouter)
+app.use("/api/channels", channelsRouter);
 
 // test
 app.get('/api/test-auth-route', (_req, res) => {
