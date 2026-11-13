@@ -53,3 +53,16 @@ export async function getUserByUsername(username: string) {
 
     return profileResult.Item
 }
+
+// authenticated users
+export async function getUserById(userId: string) {
+    const result = await db.send(new GetCommand({
+        TableName: TABLE_NAME,
+        Key: {
+            pk: `USER#${userId}`,
+            sk: 'PROFILE'
+        }
+    }))
+
+    return result.Item
+}
