@@ -9,18 +9,9 @@ import {
 import type { Message } from "../../../packages/shared/src/schema";
 import { useAuthStore } from "../store/authStore";
 import type { SyntheticEvent } from 'react';
-
-// TODO move out the helper
-function getGuestUsername() {
-	let username = sessionStorage.getItem("guestUsername");
-
-	if (!username) {
-		username = `Guest ${Math.floor(1000 + Math.random() * 9000)}`;
-		sessionStorage.setItem("guestUsername", username);
-	}
-
-	return username;
-}
+import { getGuestUsername } from "../utils/guestUsername";
+import ChannelMessages from "../components/ChannelMessages";
+import MessageForm from "../components/MessageForm";
 
 function ChannelPage() {
 	const { channelId } = useParams();
@@ -51,7 +42,7 @@ function ChannelPage() {
 		setSendError("");
 
 		try {
-			let message;
+			let message: Message;
 
 			if (token && user) {
 				// Logged in user
@@ -128,36 +119,16 @@ function ChannelPage() {
 		<main>
 			<h1># {channel.name}</h1>
 
-			{messages.length === 0 ? (
-				<p>No messages yet. Start the conversation!</p>
-			) : (
-				<div>
-					{messages.map((message) => (
-						<article key={message.messageId}>
-							<strong>{message.username}</strong>
-							<p>{message.content}</p>
-							<small>
-								{new Date(message.createdAt).toLocaleString()}
-							</small>
-						</article>
-					))}
-				</div>
-			)}
+			<ChannelMessages messages={messages} />
 
-			<form onSubmit={handleSendMessage}>
-				<input
-					type="text"
-					value={newMessage}
-					onChange={(event) => setNewMessage(event.target.value)}
-					placeholder="Write a message..."
-				/>
+			<MessageForm
+				newMessage={newMessage}
+				setNewMessage={setNewMessage}
+				sending={sending}
+				sendError={sendError}
+				handleSendMessage={handleSendMessage}
+			/>
 
-				<button type="submit" disabled={sending || !newMessage.trim()}>
-					{sending ? "Sending..." : "Send"}
-				</button>
-			</form>
-
-			{sendError && <p>{sendError}</p>}
 		</main>
 	);
 }
