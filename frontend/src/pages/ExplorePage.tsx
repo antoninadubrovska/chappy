@@ -19,7 +19,12 @@ function MoreChannelsPage() {
 	// TODO factor out a component
 	return (
 		<section>
-			<h1>More channels</h1>
+			<h1>Explore</h1>
+
+			<h2>Channels</h2>
+			
+			<button onClick={() => alert('Not implemented yet')}>Create a channel</button>
+
 			<h2>Users</h2>
 
 			{error && <p>{error}</p>}

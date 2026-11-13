@@ -47,11 +47,11 @@ function Sidebar() {
 						Home
 					</NavLink>
 					<NavLink to="/moreChannels" onClick={closeSidebar}>
-						More channels
+						Explore
 					</NavLink>
-					<NavLink to="/aiChat" onClick={closeSidebar}>
+					{/* <NavLink to="/aiChat" onClick={closeSidebar}>
 						AI chat
-					</NavLink>
+					</NavLink> */}
 				</nav>
 
 				<section className="sidebar-section">

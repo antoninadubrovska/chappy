@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import App from '../App'
-import MoreChannelsPage from '../pages/MoreChannelsPage'
-import AiChatPage from '../pages/AiChatPage'
+import MoreChannelsPage from '../pages/ExplorePage'
+// import AiChatPage from '../pages/AiChatPage'
 import HomePage from '../pages/HomePge'
 import ProfilePage from '../pages/ProfilePage'
 import DirectMessagePage from '../pages/DirectMessagePage'
@@ -34,10 +34,10 @@ export const router = createBrowserRouter([
                 path: 'moreChannels',
                 element: <MoreChannelsPage />,
             },
-            {
-                path: 'aiChat',
-                element: <AiChatPage />,
-			},
+            // {
+            //     path: 'aiChat',
+            //     element: <AiChatPage />,
+			// },
 			{
                 path: 'channel/:channelId',
                 element: <ChannelPage />,
