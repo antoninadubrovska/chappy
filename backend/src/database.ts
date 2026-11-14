@@ -66,3 +66,31 @@ export async function getUserById(userId: string) {
 
     return result.Item
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// retrieve channel metadata
+export async function getChannelById(channelId: string) {
+    const result = await db.send(new GetCommand({
+        TableName: TABLE_NAME,
+        Key: {
+            pk: `CHANNEL#${channelId}`,
+            sk: 'META'
+        }
+    }));
+
+    return result.Item;
+}

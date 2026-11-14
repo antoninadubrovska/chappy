@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { QueryCommand, TransactWriteCommand, PutCommand, } from "@aws-sdk/lib-dynamodb";
-import { db, TABLE_NAME, getUserById } from "../database.ts";
+import { db, TABLE_NAME, getUserById, getChannelById } from "../database.ts";
 import {
 	channelIndexFromDbSchema,
 	type ChannelIndexFromDb,
@@ -9,10 +9,12 @@ import {
 	type Message,
 	messageFromDbSchema, guestMessageCreationSchema,
 	authenticatedMessageCreationSchema,
+	channelFromDbSchema
 
 } from "../../../packages/shared/src/schema.ts";
 import { randomUUID } from "node:crypto";
 import { requireAuth, optionalAuth } from "../middleware.ts";
+
 
 const router = Router();
 
@@ -42,11 +44,41 @@ router.get("/", async (_req, res) => {
 
 
 // GET /api/channels/:channelId/messages
-router.get("/:channelId/messages", async (req, res) => {
-    const channelId = req.params.channelId;
+router.get("/:channelId/messages", optionalAuth, async (req, res) => {
+	const channelId = req.params.channelId;
 
-    try {
-        const result = await db.send(
+	if (typeof channelId !== "string") {
+		return res.sendStatus(400);
+	}
+
+	try {
+
+		// Retrieve channel metadata
+        const channel = await getChannelById(channelId);
+
+        if (!channel) {
+            return res.sendStatus(404);
+        }
+
+        // Validate channel metadata
+        const channelResult = channelFromDbSchema.safeParse(channel);
+
+        if (!channelResult.success) {
+            console.error("Invalid channel metadata:", channelResult.error.issues);
+            return res.sendStatus(500);
+        }
+
+        const userId = res.locals.userId;
+
+        // Guests cannot access locked channels
+        if (channelResult.data.isLocked && !userId) {
+            return res.sendStatus(403);
+		}
+
+		// retrieve messages
+		const result = await db.send(
+
+
             new QueryCommand({
                 TableName: TABLE_NAME,
                 KeyConditionExpression:
@@ -79,101 +111,6 @@ router.get("/:channelId/messages", async (req, res) => {
         return res.sendStatus(500);
     }
 });
-
-
-//  // POST /api/channels/:channelId/messages
-// router.post("/:channelId/messages", optionalAuth, async (req, res) => {
-
-// 	const channelId = req.params.channelId;
-
-// 	if (typeof channelId !== "string") {
-// 		return res.sendStatus(400);
-// 	}
-
-//     const userId = res.locals.userId;
-
-//     let username: string;
-// 	let messageUserId: string | null;
-// 	let content: string;
-
-
-// 	// validate request
-//     if (userId) {
-// 		const result = authenticatedMessageCreationSchema.safeParse(req.body);
-
-
-//         if (!result.success) {
-//             return res.status(400).json({
-//                 message: "Invalid message data",
-//                 errors: result.error.issues,
-//             });
-//         }
-
-// 		// TODO move getUserById inside the try
-//         const user = await getUserById(userId);
-
-//         if (!user) {
-//             return res.sendStatus(401);
-//         }
-
-//         username = user.username;
-// 		messageUserId = userId;
-// 		content = result.data.content;
-
-//     } else {
-//         const result = guestMessageCreationSchema.safeParse(req.body);
-
-//         if (!result.success) {
-//             return res.status(400).json({
-//                 message: "Invalid message data",
-//                 errors: result.error.issues,
-//             });
-//         }
-
-//         username = result.data.username;
-//         messageUserId = null;
-//         content = result.data.content;
-//     }
-
-// 	// create message
-
-//     const messageId = randomUUID();
-//     const createdAt = new Date().toISOString();
-
-//     const message: Message = {
-//         messageId,
-//         channelId,
-//         userId: messageUserId,
-//         username,
-//         content,
-//         createdAt,
-//     };
-
-// 	// store each message in the channel's partition
-//     try {
-//         await db.send(
-//             new PutCommand({
-//                 TableName: TABLE_NAME,
-// 				Item: {
-// 					// group messages belonging to the same channel
-// 					pk: `CHANNEL#${channelId}`,
-// 					// give each message a chronological position and unique ID
-// 					sk: `MESSAGE#${createdAt}#${messageId}`,
-// 					// identifies the record as a message
-// 					type: "MESSAGE",
-// 					// add the message properties
-//                     ...message,
-//                 },
-//             }),
-//         );
-
-//         return res.status(201).json(message);
-
-//     } catch (error) {
-//         console.error("POST channel message error:", error);
-//         return res.sendStatus(500);
-//     }
-// });
 
 
 
