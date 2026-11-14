@@ -133,11 +133,15 @@ function ChannelPage() {
 	if (!channel) return <p>Channel not found</p>;
 
 	return (
-		<main>
+		<main className="channel-page">
+			<header className="channel-header">
+
 			<h1># {channel.name}</h1>
+			</header>
+
 
 			{accessDenied ? (
-				<section>
+				<section className="access-denied">
 					<h2>🔒 Private channel</h2>
 					<p>You need to log in to view this conversation.</p>
 					<p>

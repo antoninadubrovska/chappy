@@ -1,5 +1,6 @@
 @import './App.css';
 @import './styles/AuthForm.css';
+@import './styles/Channel.css';
 
 :root {
     font-family: Arial, sans-serif;

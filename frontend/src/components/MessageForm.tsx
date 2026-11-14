@@ -16,8 +16,8 @@ function MessageForm({
     handleSendMessage
 }: MessageFormProps) {
     return (
-        <>
-            <form onSubmit={handleSendMessage}>
+        <div className="message-input-area">
+            <form className="message-form" onSubmit={handleSendMessage}>
                 <input
                     type="text"
                     value={newMessage}
@@ -33,8 +33,8 @@ function MessageForm({
                 </button>
             </form>
 
-            {sendError && <p>{sendError}</p>}
-        </>
+            {sendError && <p className="message-error">{sendError}</p>}
+        </div>
     );
 }
 

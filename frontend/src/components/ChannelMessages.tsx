@@ -10,12 +10,14 @@ function ChannelMessages({ messages }: ChannelMessagesProps) {
     }
 
     return (
-        <div>
+        <div className="channel-messages">
             {messages.map((message) => (
-                <article key={message.messageId}>
-                    <strong>{message.username}</strong>
-                    <p>{message.content}</p>
-                    <small>
+                <article className="message" key={message.messageId}>
+					<strong className="message-username">{message.username}</strong>
+
+					<p className="message-content">{message.content}</p>
+
+					<small className="message-timestamp">
                         {new Date(message.createdAt).toLocaleString()}
                     </small>
                 </article>
