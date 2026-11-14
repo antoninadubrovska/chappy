@@ -1,6 +1,7 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
+	ApiError,
 	getChannels,
 	getChannelMessages,
 	sendChannelMessage,
@@ -8,7 +9,7 @@ import {
 } from "../api/channels";
 import type { Message } from "../../../packages/shared/src/schema";
 import { useAuthStore } from "../store/authStore";
-import type { SyntheticEvent } from 'react';
+import type { SyntheticEvent } from "react";
 import { getGuestUsername } from "../utils/guestUsername";
 import ChannelMessages from "../components/ChannelMessages";
 import MessageForm from "../components/MessageForm";
@@ -25,6 +26,7 @@ function ChannelPage() {
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
+	const [accessDenied, setAccessDenied] = useState(false);
 
 	// state for the message input
 	const [newMessage, setNewMessage] = useState("");
@@ -62,7 +64,6 @@ function ChannelPage() {
 			// use the previous state and append the newly returned message
 			setMessages((previousMessages) => [...previousMessages, message]);
 
-
 			setNewMessage("");
 		} catch (error) {
 			setSendError(
@@ -85,32 +86,14 @@ function ChannelPage() {
 			setError("");
 			setChannel(null);
 			setMessages([]);
+			setAccessDenied(false);
 
 			try {
-				// // fetch the channel list and its messages at the same time
-				// const [channels, channelMessages] =
-				// // await Promise.all([
-				// // 	getChannels(),
-				// // 	getChannelMessages(channelId, token ?? undefined),
-				// // ]);
-
-				// // // locate the channel whose ID matches the URL
-				// // const currentChannel = channels.find(
-				// // 	(channel) => channel.channelId === channelId,
-				// // );
-
-				// // if (!currentChannel) {
-				// // 	throw new Error("Channel not found");
-				// // }
-
-				// // setChannel(currentChannel);
-				// // setMessages(channelMessages);
-				// Fetch all channels
 				const channels = await getChannels();
 
 				// Find the channel matching the URL
 				const currentChannel = channels.find(
-					(channel) => channel.channelId === channelId
+					(channel) => channel.channelId === channelId,
 				);
 
 				if (!currentChannel) {
@@ -123,18 +106,20 @@ function ChannelPage() {
 				// Fetch messages using the optional authentication token
 				const channelMessages = await getChannelMessages(
 					channelId,
-					token ?? undefined
+					token ?? undefined,
 				);
 
 				setMessages(channelMessages);
-
-
 			} catch (error) {
-				setError(
-					error instanceof Error
-						? error.message
-						: "Something went wrong",
-				);
+				if (error instanceof ApiError && error.status === 403) {
+					setAccessDenied(true);
+				} else {
+					setError(
+						error instanceof Error
+							? error.message
+							: "Something went wrong",
+					);
+				}
 			} finally {
 				setLoading(false);
 			}
@@ -143,7 +128,6 @@ function ChannelPage() {
 		loadChannel();
 	}, [channelId, token]);
 
-	// TODO adjust so a 403 doesn't hide the channel information
 	if (loading) return <p>Loading channel...</p>;
 	if (error) return <p>{error}</p>;
 	if (!channel) return <p>Channel not found</p>;
@@ -152,16 +136,30 @@ function ChannelPage() {
 		<main>
 			<h1># {channel.name}</h1>
 
-			<ChannelMessages messages={messages} />
+			{accessDenied ? (
+				<section>
+					<h2>🔒 Private channel</h2>
+					<p>You need to log in to view this conversation.</p>
+					<p>
+						<Link to="/login">Log in</Link>
+						{" or "}
+						<Link to="/register">create an account</Link>
+						{" to continue."}
+					</p>
+				</section>
+			) : (
+				<>
+					<ChannelMessages messages={messages} />
 
-			<MessageForm
-				newMessage={newMessage}
-				setNewMessage={setNewMessage}
-				sending={sending}
-				sendError={sendError}
-				handleSendMessage={handleSendMessage}
-			/>
-
+					<MessageForm
+						newMessage={newMessage}
+						setNewMessage={setNewMessage}
+						sending={sending}
+						sendError={sendError}
+						handleSendMessage={handleSendMessage}
+					/>
+				</>
+			)}
 		</main>
 	);
 }

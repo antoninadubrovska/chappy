@@ -4,6 +4,17 @@ import type {
     AuthenticatedMessageCreation,
 } from "../../../packages/shared/src/schema.ts";
 
+
+export class ApiError extends Error {
+    status: number;
+
+    constructor(message: string, status: number) {
+        super(message);
+        this.status = status;
+    }
+}
+
+
 export type Channel = {
     channelId: string;
     name: string;
@@ -14,7 +25,7 @@ export async function getChannels(): Promise<Channel[]> {
     const response = await fetch('/api/channels');
 
     if (!response.ok) {
-        throw new Error('Could not retrieve channels');
+        throw new ApiError('Could not retrieve channels', response.status);
     }
 
     return response.json();
@@ -37,7 +48,7 @@ export async function getChannelMessages(
     );
 
     if (!response.ok) {
-        throw new Error('Could not retrieve channel messages');
+        throw new ApiError('Could not retrieve channel messages', response.status);
     }
 
     return response.json();
@@ -65,7 +76,7 @@ export async function sendChannelMessage(
     );
 
     if (!response.ok) {
-        throw new Error('Could not send message');
+        throw new ApiError('Could not send message', response.status);
     }
 
     return response.json();
