@@ -120,13 +120,40 @@ router.post("/:channelId/messages", optionalAuth, async (req, res) => {
 
     if (typeof channelId !== "string") {
         return res.sendStatus(400);
-    }
+	}
+
+
 
     const userId = res.locals.userId;
 
     let username = '';
     let messageUserId: string | null = null;
     let content = '';
+
+
+
+
+	try {
+
+		// Retrieve channel metadata
+        const channel = await getChannelById(channelId);
+
+        if (!channel) {
+            return res.sendStatus(404);
+        }
+
+        // Validate channel metadata
+        const channelResult = channelFromDbSchema.safeParse(channel);
+
+        if (!channelResult.success) {
+            console.error("Invalid channel metadata:", channelResult.error.issues);
+            return res.sendStatus(500);
+        }
+
+        // Guests cannot send messages to locked channels
+        if (channelResult.data.isLocked && !userId) {
+            return res.sendStatus(403);
+        }
 
     // Validate the request
     if (userId) {
@@ -156,7 +183,7 @@ router.post("/:channelId/messages", optionalAuth, async (req, res) => {
         content = result.data.content;
     }
 
-    try {
+
         // Look up authenticated user
         if (userId) {
             const user = await getUserById(userId);
