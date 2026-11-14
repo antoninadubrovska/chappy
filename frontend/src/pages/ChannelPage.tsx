@@ -135,17 +135,20 @@ function ChannelPage() {
 	return (
 		<main className="channel-page">
 			<header className="channel-header">
-
-			<h1># {channel.name}</h1>
+				<h1># {channel.name}</h1>
 			</header>
-
 
 			{accessDenied ? (
 				<section className="access-denied">
 					<h2>🔒 Private channel</h2>
 					<p>You need to log in to view this conversation.</p>
 					<p>
-						<Link to="/login">Log in</Link>
+						<Link
+							to="/login"
+							state={{ from: `/channel/${channelId}` }}
+						>
+							Log in
+						</Link>
 						{" or "}
 						<Link to="/register">create an account</Link>
 						{" to continue."}
