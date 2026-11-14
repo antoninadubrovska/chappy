@@ -62,6 +62,7 @@ function ChannelPage() {
 			// use the previous state and append the newly returned message
 			setMessages((previousMessages) => [...previousMessages, message]);
 
+
 			setNewMessage("");
 		} catch (error) {
 			setSendError(
@@ -79,24 +80,55 @@ function ChannelPage() {
 		async function loadChannel() {
 			if (!channelId) return;
 
-			try {
-				// fetch the channel list and its messages at the same time
-				const [channels, channelMessages] = await Promise.all([
-					getChannels(),
-					getChannelMessages(channelId),
-				]);
+			// every channel navigation starts with a clean state
+			setLoading(true);
+			setError("");
+			setChannel(null);
+			setMessages([]);
 
-				// locate the channel whose ID matches the URL
+			try {
+				// // fetch the channel list and its messages at the same time
+				// const [channels, channelMessages] =
+				// // await Promise.all([
+				// // 	getChannels(),
+				// // 	getChannelMessages(channelId, token ?? undefined),
+				// // ]);
+
+				// // // locate the channel whose ID matches the URL
+				// // const currentChannel = channels.find(
+				// // 	(channel) => channel.channelId === channelId,
+				// // );
+
+				// // if (!currentChannel) {
+				// // 	throw new Error("Channel not found");
+				// // }
+
+				// // setChannel(currentChannel);
+				// // setMessages(channelMessages);
+				// Fetch all channels
+				const channels = await getChannels();
+
+				// Find the channel matching the URL
 				const currentChannel = channels.find(
-					(channel) => channel.channelId === channelId,
+					(channel) => channel.channelId === channelId
 				);
 
 				if (!currentChannel) {
 					throw new Error("Channel not found");
 				}
 
+				// Save channel information before fetching messages
 				setChannel(currentChannel);
+
+				// Fetch messages using the optional authentication token
+				const channelMessages = await getChannelMessages(
+					channelId,
+					token ?? undefined
+				);
+
 				setMessages(channelMessages);
+
+
 			} catch (error) {
 				setError(
 					error instanceof Error
@@ -109,8 +141,9 @@ function ChannelPage() {
 		}
 
 		loadChannel();
-	}, [channelId]);
+	}, [channelId, token]);
 
+	// TODO adjust so a 403 doesn't hide the channel information
 	if (loading) return <p>Loading channel...</p>;
 	if (error) return <p>{error}</p>;
 	if (!channel) return <p>Channel not found</p>;

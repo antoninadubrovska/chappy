@@ -22,10 +22,18 @@ export async function getChannels(): Promise<Channel[]> {
 
 
 export async function getChannelMessages(
-    channelId: string
+	channelId: string,
+	token?: string
 ): Promise<Message[]> {
     const response = await fetch(
-        `/api/channels/${channelId}/messages`
+		`/api/channels/${channelId}/messages`,
+		{
+            headers: {
+                ...(token && {
+                    Authorization: `Bearer ${token}`
+                })
+            }
+        }
     );
 
     if (!response.ok) {
